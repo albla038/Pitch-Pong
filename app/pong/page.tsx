@@ -1,5 +1,9 @@
-import React from "react";
+import PongGame from "@/app/game/pong-game";
 
 export default function Page() {
-  return <div>Hello Pong</div>;
+  return (
+    <main>
+      <PongGame />
+    </main>
+  );
 }
