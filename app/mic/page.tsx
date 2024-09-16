@@ -8,5 +8,5 @@ export default function Page() {
     main();
   }, []);
 
-  return <div>Mic</div>;
+  return <button className="bg-gray-500 p-5 rounded-xl">start</button>;
 }

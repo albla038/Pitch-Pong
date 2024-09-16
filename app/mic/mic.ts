@@ -1,3 +1,1 @@
-export default function main() {
-  const test = 2;
-}
+export default function main() {}
