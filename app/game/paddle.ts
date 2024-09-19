@@ -12,7 +12,7 @@ export default class Paddle {
     width: number,
     height: number,
     radius: number,
-    color: string,
+    color: string
   ) {
     this._x = x;
     this._y = y;
@@ -42,7 +42,7 @@ export default class Paddle {
     upperBound: number,
     lowerBound: number,
     speed: number,
-    direction: "up" | "down",
+    direction: "up" | "down"
   ) {
     // Move paddle up
     if (direction === "up") {
