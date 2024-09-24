@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 export function useFrameLoop(
-  isRunning: boolean,
+  gameState: string,
   callback: (time: number, deltaTime: number) => void,
 ) {
   const requestID = useRef(0);
@@ -27,5 +27,7 @@ export function useFrameLoop(
     return () => {
       cancelAnimationFrame(requestID.current);
     };
-  }, [isRunning]);
+  }, [gameState]);
 }
+
+// function useMicrophoneStream

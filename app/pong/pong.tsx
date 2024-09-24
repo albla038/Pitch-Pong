@@ -6,11 +6,15 @@ import {
   PADDLE_SPEED,
   BALL_SPEED,
   GRAY_50,
+  initialLeftPaddleData,
+  initialRightPaddleData,
 } from "@/app/lib/constants";
-import { useFrameLoop } from "@/app/lib/hooks";
+import { useFrameLoop } from "@/app/lib/hooks/useFrameLoop";
 import { getRandomAngle } from "@/app/lib/utils";
 import Ball from "@/app/pong/ball";
+import HalfWayLine from "@/app/pong/half-way-line";
 import Paddle from "@/app/pong/paddle";
+import Title from "@/app/pong/title";
 import { useEffect, useRef, useState } from "react";
 
 function setInitialBallData() {
@@ -22,28 +26,15 @@ function setInitialBallData() {
     color: GRAY_50,
     velocityX: BALL_SPEED * Math.cos(angle),
     velocityY: BALL_SPEED * Math.sin(angle),
+    opacity: 1,
   };
 }
 
-const initialLeftPaddleData = {
-  x: 8,
-  y: GAME_BOARD_HEIGHT / 2 - 48 / 2,
-  width: 8,
-  height: 48,
-  color: GRAY_50,
-};
-
-const initialRightPaddleData = {
-  x: GAME_BOARD_WIDTH - (8 + 8),
-  y: GAME_BOARD_HEIGHT / 2 - 48 / 2,
-  width: 8,
-  height: 48,
-  color: GRAY_50,
-};
-
 export default function Pong() {
   // State
-  const [isRunning, setIsRunning] = useState(false);
+  const [gameState, setGameState] = useState<
+    "initial" | "running" | "paused" | "game over"
+  >("initial");
 
   const pressedKeys = useRef(new Set<string>());
 
@@ -69,7 +60,8 @@ export default function Pong() {
 
     window.addEventListener("keydown", (event) => {
       if (event.code === "Space") {
-        setIsRunning((prev) => !prev);
+        console.log("Space pressed");
+        setGameState((prev) => (prev === "running" ? "paused" : "running"));
       } else {
         handleAddKey(event.code);
       }
@@ -230,41 +222,77 @@ export default function Pong() {
 
   function stop() {
     setBallData(setInitialBallData);
-    setIsRunning(false);
+    setGameState("game over");
   }
 
-  // Loop hook
-  useFrameLoop(isRunning, (time, deltaTime) => {
+  const [frameTime, setFrameTime] = useState(0);
+  const [countDown, setCountDown] = useState(3);
+
+  // Loop hook, runs every frame
+  useFrameLoop(gameState, (time, deltaTime) => {
+    setFrameTime(time);
     const deltaTimeSeconds = deltaTime / 1000;
+
     handleKeyboardInput(deltaTimeSeconds);
-    if (isRunning) {
+
+    // Move ball if game is running
+    if (gameState === "running") {
       moveBall(deltaTimeSeconds);
+    }
+
+    // If game is over, count down to start new game
+    if (gameState === "game over") {
+      setCountDown((prev) => prev - deltaTimeSeconds);
     }
   });
 
+  let ballOpacity = 1;
+
+  // If game is over, signal new game with a pulsating ball
+  if (gameState === "game over") {
+    ballOpacity = Math.pow(Math.cos(countDown * Math.PI), 12) + 0.25;
+
+    // If countdown is over, start game again
+    if (countDown <= 0) {
+      setCountDown(3);
+      setGameState("running");
+    }
+  }
+
+  // Check paddle boundaries and ball collisions
   checkPaddleBoundaries();
   checkBallCollisions();
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-gray-100">
       <main className="relative flex h-[724px] w-[1024px] flex-col items-center justify-center rounded-md bg-gray-900">
-        <div className="absolute left-1/2 top-3 flex w-[800px] -translate-x-1/2 items-end justify-around text-center text-gray-50">
+        <div className="absolute left-1/2 top-3 flex w-[800px] -translate-x-1/2 items-end justify-around text-center font-mono text-gray-50">
           <p className="text-3xl">{leftPlayerScore}</p>
-          <div>
-            <button onClick={() => setIsRunning((prev) => !prev)}>
-              {isRunning ? "Pause" : "Start"}
-            </button>
-            <p>{isRunning ? "Game running" : "Game paused"}</p>
-          </div>
+          <button
+            onClick={() => {
+              setGameState((prev) =>
+                prev === "running" ? "paused" : "running",
+              );
+            }}
+          >
+            {gameState === "running" ? "Pause" : "Start"}
+          </button>
           <p className="text-3xl">{rightPlayerScore}</p>
         </div>
         <div
           className="relative flex items-center justify-center rounded-md bg-gray-950"
           style={{ width: GAME_BOARD_WIDTH, height: GAME_BOARD_HEIGHT }}
         >
+          <HalfWayLine />
+          {gameState === "initial" && (
+            <Title text="press space to start" pulse={false} />
+          )}
+          {gameState === "paused" && (
+            <Title text="paused" pulse={true} frameTime={frameTime} />
+          )}
           <Paddle {...leftPaddleData} key={"left"} />
           <Paddle {...rightPaddleData} key={"right"} />
-          <Ball {...ballData}></Ball>
+          <Ball {...ballData} opacity={ballOpacity}></Ball>
         </div>
       </main>
     </div>

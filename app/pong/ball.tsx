@@ -3,9 +3,10 @@ type BallProps = {
   y: number;
   radius: number;
   color: string;
+  opacity: number;
 };
 
-export default function Ball({ x, y, radius, color }: BallProps) {
+export default function Ball({ x, y, radius, color, opacity }: BallProps) {
   return (
     <div
       className="absolute z-10 rounded-full"
@@ -15,6 +16,7 @@ export default function Ball({ x, y, radius, color }: BallProps) {
         width: `${2 * radius}px`,
         height: `${2 * radius}px`,
         backgroundColor: color,
+        opacity,
       }}
     ></div>
   );

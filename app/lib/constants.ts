@@ -11,3 +11,20 @@ export const GRAY_50 = "#f9fafb";
 export const GRAY_800 = "#1f2937";
 export const GRAY_900 = "#111827";
 export const GRAY_950 = "#030712";
+
+// Inital data
+export const initialLeftPaddleData = {
+  x: 8,
+  y: GAME_BOARD_HEIGHT / 2 - 48 / 2,
+  width: 8,
+  height: 48,
+  color: GRAY_50,
+};
+
+export const initialRightPaddleData = {
+  x: GAME_BOARD_WIDTH - (8 + 8),
+  y: GAME_BOARD_HEIGHT / 2 - 48 / 2,
+  width: 8,
+  height: 48,
+  color: GRAY_50,
+};
