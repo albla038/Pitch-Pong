@@ -4,7 +4,7 @@ export function useMicrophoneStream() {
   const [audioContext, setAudioContext] = useState<AudioContext | null>(null);
   const [microphoneStream, setMicrophoneStream] =
     useState<MediaStreamAudioSourceNode | null>(null);
-  const [error, setError] = useState<String | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let audioCtx: AudioContext | null = null;
@@ -25,7 +25,7 @@ export function useMicrophoneStream() {
         setAudioContext(audioCtx);
         setMicrophoneStream(source);
       } catch (error: any) {
-        console.error("coudn't initiliaze microphone", error);
+        console.error("Couldn't initialize microphone: ", error);
         setError("Microphone access was denied or is unavailable.");
       }
     }
@@ -39,5 +39,5 @@ export function useMicrophoneStream() {
     };
   }, []);
 
-  return { audioContext, microphoneStream, error};
+  return { audioContext, microphoneStream, error };
 }
