@@ -16,6 +16,7 @@ import HalfWayLine from "@/app/pong/half-way-line";
 import Paddle from "@/app/pong/paddle";
 import Title from "@/app/pong/title";
 import { useEffect, useRef, useState } from "react";
+import { useMicrophoneStream } from "../lib/hooks/useMicrophoneStream";
 
 function setInitialBallData() {
   const angle = getRandomAngle();
@@ -227,6 +228,9 @@ export default function Pong() {
 
   const [frameTime, setFrameTime] = useState(0);
   const [countDown, setCountDown] = useState(3);
+
+  const {audioContext, microphoneStream, error} = useMicrophoneStream();
+
 
   // Loop hook, runs every frame
   useFrameLoop(gameState, (time, deltaTime) => {
