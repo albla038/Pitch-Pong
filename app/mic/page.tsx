@@ -1,12 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
-import main from "./mic";
+import { useEffect, useState } from "react";
+import { useMicrophoneStream } from "../lib/hooks/useMicrophoneStream";
+import { usePitchDetection } from "../lib/hooks/usePitchDetection";
 
 export default function Page() {
-  useEffect(() => {
-    main();
-  }, []);
+  const [maxFrequency, setMaxFrequency] = useState<number | null>(null);
+  const { audioContext, microphoneStream, error } = useMicrophoneStream();
 
-  return <button className="bg-gray-500 p-5 rounded-xl">start</button>;
+  usePitchDetection(audioContext, microphoneStream, (frequency) => {
+    setMaxFrequency(frequency);
+  });
+
+  return <p>{maxFrequency && maxFrequency}</p>;
 }
