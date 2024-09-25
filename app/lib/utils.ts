@@ -31,8 +31,8 @@ function getPitch(
       hpsArray[i] *= downsampledArray[i];
     }
   }
-
-  const fundamentalFreq = (max * sampleRate) / binSize;
+  const index = hpsArray.indexOf(Math.max(...hpsArray));
+  const fundamentalFreq = (index * sampleRate) / binSize;
 
   return fundamentalFreq;
 }
