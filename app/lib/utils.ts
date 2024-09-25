@@ -7,12 +7,13 @@ export function getRandomAngle() {
   }
 }
 
+/*
 export function getPitch(
   frequencyArray: number[],
   sampleRate: number,
   binSize: number,
 ): number {
-  const numHarmonics = 4; //antal harmoniska
+  const numHarmonics = 5; //antal harmoniska
   const hpsArray = frequencyArray.slice(); //skapa en kopia av frekvensarrayen för att undvika att ändra original data
   //Utför hps genom att multiplicera  nedskalade spektra
   for (let harmonic = 2; harmonic <= numHarmonics; harmonic++) {
@@ -31,4 +32,36 @@ export function getPitch(
   const fundamentalFreq = (index * sampleRate) / binSize;
 
   return fundamentalFreq;
+}
+*/
+
+export function getPitch(
+  frequencyArray: number[],
+  sampleRate: number,
+  binSize: number,
+): number {
+  const output1 = [];
+  for (let i = 0; i < frequencyArray.length; i += 2) {
+    output1.push(frequencyArray[i]);
+  }
+
+  const output2 = [];
+  for (let i = 0; i < frequencyArray.length; i += 3) {
+    output2.push(frequencyArray[i]);
+  }
+
+  const output3 = [];
+  for (let i = 0; i < frequencyArray.length; i += 4) {
+    output3.push(frequencyArray[i]);
+  }
+
+  let output4: number[] = [];
+  for (let i = 0; i < output3.length; i++) {
+    output4[i] = frequencyArray[i] * output1[i] * output2[i] * output3[i];
+  }
+
+  const max = Math.max(...output4);
+  const index = output4.indexOf(max);
+
+  return (index * sampleRate) / binSize;
 }

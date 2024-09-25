@@ -242,12 +242,16 @@ export default function Pong() {
       const dataArray = new Uint8Array(fftAnalyser.frequencyBinCount);
       fftAnalyser.getByteFrequencyData(dataArray);
       const frequencyArray = Array.from(dataArray);
-      // const pitch = getPitch(frequencyArray, audioContext.sampleRate, binSize);
-      // console.log(pitch);
-      const maxFrequency = Math.max(...frequencyArray);
-      const index = frequencyArray.indexOf(maxFrequency);
-      const pitch = (index * audioContext.sampleRate) / binSize;
+      const pitch = getPitch(
+        frequencyArray,
+        audioContext.sampleRate / 2,
+        binSize,
+      );
       console.log(pitch);
+      // const maxFrequency = Math.max(...frequencyArray);
+      // const index = frequencyArray.indexOf(maxFrequency);
+      // const pitch = (index * audioContext.sampleRate) / binSize;
+      // console.log(pitch);
     }
 
     setFrameTime(time);
