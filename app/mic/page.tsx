@@ -10,6 +10,7 @@ export default function Page() {
 
   usePitchDetection(audioContext, microphoneStream, (frequency) => {
     setMaxFrequency(frequency);
+    console.log(frequency);
   });
 
   return <p>{maxFrequency && maxFrequency}</p>;

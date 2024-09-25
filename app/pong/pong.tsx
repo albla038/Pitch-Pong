@@ -10,13 +10,14 @@ import {
   initialRightPaddleData,
 } from "@/app/lib/constants";
 import { useFrameLoop } from "@/app/lib/hooks/useFrameLoop";
-import { getRandomAngle } from "@/app/lib/utils";
+import { getPitch, getRandomAngle, testFFT } from "@/app/lib/utils";
 import Ball from "@/app/pong/ball";
 import HalfWayLine from "@/app/pong/half-way-line";
 import Paddle from "@/app/pong/paddle";
 import Title from "@/app/pong/title";
 import { useEffect, useRef, useState } from "react";
 import { useMicrophoneStream } from "../lib/hooks/useMicrophoneStream";
+import { useFFT } from "@/app/lib/hooks/useFFT()";
 
 function setInitialBallData() {
   const angle = getRandomAngle();
@@ -229,11 +230,26 @@ export default function Pong() {
   const [frameTime, setFrameTime] = useState(0);
   const [countDown, setCountDown] = useState(3);
 
-  const {audioContext, microphoneStream, error} = useMicrophoneStream();
+  const binSize = 16384;
 
+  const { audioContext, microphoneStream, error } = useMicrophoneStream();
+  const fftAnalyser = useFFT(audioContext, microphoneStream, binSize);
 
   // Loop hook, runs every frame
   useFrameLoop(gameState, (time, deltaTime) => {
+    // Get pitch from microphone
+    if (audioContext && fftAnalyser) {
+      const dataArray = new Uint8Array(fftAnalyser.frequencyBinCount);
+      fftAnalyser.getByteFrequencyData(dataArray);
+      const frequencyArray = Array.from(dataArray);
+      // const pitch = getPitch(frequencyArray, audioContext.sampleRate, binSize);
+      // console.log(pitch);
+      const maxFrequency = Math.max(...frequencyArray);
+      const index = frequencyArray.indexOf(maxFrequency);
+      const pitch = (index * audioContext.sampleRate) / binSize;
+      console.log(pitch);
+    }
+
     setFrameTime(time);
     const deltaTimeSeconds = deltaTime / 1000;
 
