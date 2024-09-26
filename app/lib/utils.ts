@@ -29,7 +29,7 @@ export function getPitch(
     }
   }
   const index = hpsArray.indexOf(Math.max(...hpsArray));
-  const fundamentalFreq = (index * sampleRate) / binSize;
+  const fundamentalFreq = (index * (sampleRate / 2)) / binSize;
 
   return fundamentalFreq;
 }

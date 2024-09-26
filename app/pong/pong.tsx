@@ -18,6 +18,9 @@ import Title from "@/app/pong/title";
 import { useEffect, useRef, useState } from "react";
 import { useMicrophoneStream } from "../lib/hooks/useMicrophoneStream";
 import { useFFT } from "@/app/lib/hooks/useFFT";
+import { simplePitchAlgo } from "@/app/lib/simplePitchAlgo";
+import { controller } from "@/app/pong/controller";
+import { majorScales } from "@/app/lib/data";
 
 function setInitialBallData() {
   const angle = getRandomAngle();
@@ -230,7 +233,7 @@ export default function Pong() {
   const [frameTime, setFrameTime] = useState(0);
   const [countDown, setCountDown] = useState(3);
 
-  const binSize = 16384;
+  const binSize = 16384 / 2;
 
   const { audioContext, microphoneStream, error } = useMicrophoneStream();
   const fftAnalyser = useFFT(audioContext, microphoneStream, binSize);
@@ -242,16 +245,15 @@ export default function Pong() {
       const dataArray = new Uint8Array(fftAnalyser.frequencyBinCount);
       fftAnalyser.getByteFrequencyData(dataArray);
       const frequencyArray = Array.from(dataArray);
-      const pitch = getPitch(
+      // const pitch = getPitch(frequencyArray, audioContext.sampleRate, binSize);
+      const pitch = simplePitchAlgo(
         frequencyArray,
         audioContext.sampleRate / 2,
         binSize,
       );
       console.log(pitch);
-      // const maxFrequency = Math.max(...frequencyArray);
-      // const index = frequencyArray.indexOf(maxFrequency);
-      // const pitch = (index * audioContext.sampleRate) / binSize;
-      // console.log(pitch);
+
+      controller(majorScales[0], pitch, GAME_BOARD_HEIGHT, setLeftPaddleData);
     }
 
     setFrameTime(time);
