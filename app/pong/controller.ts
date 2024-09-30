@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction } from "react";
 
 export function controller(
   scale: {
-    scaleName: string;
     scaleTones: string[];
     lowestToneFreq: number;
     highestToneFreq: number;

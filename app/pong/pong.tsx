@@ -233,7 +233,7 @@ export default function Pong() {
   const [frameTime, setFrameTime] = useState(0);
   const [countDown, setCountDown] = useState(3);
 
-  const binSize = 16384 / 2;
+  const binSize = 16384;
 
   const { audioContext, microphoneStream, error } = useMicrophoneStream();
   const fftAnalyser = useFFT(audioContext, microphoneStream, binSize);
@@ -245,15 +245,20 @@ export default function Pong() {
       const dataArray = new Uint8Array(fftAnalyser.frequencyBinCount);
       fftAnalyser.getByteFrequencyData(dataArray);
       const frequencyArray = Array.from(dataArray);
-      // const pitch = getPitch(frequencyArray, audioContext.sampleRate, binSize);
-      const pitch = simplePitchAlgo(
-        frequencyArray,
-        audioContext.sampleRate / 2,
-        binSize,
-      );
+      const pitch = getPitch(frequencyArray, audioContext.sampleRate, binSize);
+      // const pitch = simplePitchAlgo(
+      //   frequencyArray,
+      //   audioContext.sampleRate,
+      //   binSize,
+      // );
       console.log(pitch);
 
-      controller(majorScales[0], pitch, GAME_BOARD_HEIGHT, setLeftPaddleData);
+      controller(
+        majorScales["C4"],
+        pitch,
+        GAME_BOARD_HEIGHT,
+        setLeftPaddleData,
+      );
     }
 
     setFrameTime(time);

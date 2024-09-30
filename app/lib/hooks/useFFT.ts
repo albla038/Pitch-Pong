@@ -15,6 +15,7 @@ export function useFFT(
       microphoneStream.connect(analyser);
 
       analyser.fftSize = binCount * 2; // FFT size
+      console.log("FFT size: ", analyser.fftSize);
 
       setFftAnalyser(analyser);
     }
