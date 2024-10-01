@@ -238,27 +238,46 @@ export default function Pong() {
   const { audioContext, microphoneStream, error } = useMicrophoneStream();
   const fftAnalyser = useFFT(audioContext, microphoneStream, binSize);
 
+  const pitch = useRef(-1);
+  const initalTime = 0.3;
+  const timeBuffer = useRef(initalTime);
+
   // Loop hook, runs every frame
   useFrameLoop(gameState, (time, deltaTime) => {
     // Get pitch from microphone
     if (audioContext && fftAnalyser) {
       const dataArray = new Uint8Array(fftAnalyser.frequencyBinCount);
-      fftAnalyser.getByteFrequencyData(dataArray);
-      const frequencyArray = Array.from(dataArray);
-      const pitch = getPitch(frequencyArray, audioContext.sampleRate, binSize);
-      // const pitch = simplePitchAlgo(
-      //   frequencyArray,
-      //   audioContext.sampleRate,
-      //   binSize,
-      // );
-      console.log(pitch);
 
-      controller(
-        majorScales["C4"],
-        pitch,
-        GAME_BOARD_HEIGHT,
-        setLeftPaddleData,
-      );
+      timeBuffer.current -= deltaTime / 1000;
+      // console.log("Time buffer: ", timeBuffer.current);
+
+      if (timeBuffer.current <= 0) {
+        fftAnalyser.getByteFrequencyData(dataArray);
+        const frequencyArray = Array.from(dataArray);
+        timeBuffer.current = initalTime;
+        const gatedArray = frequencyArray.map((e) => {
+          if (e < 24) return 0;
+          else return e;
+        });
+
+        const p = getPitch(gatedArray, audioContext.sampleRate, binSize);
+        // const pitch = simplePitchAlgo(
+        //   frequencyArray,
+        //   audioContext.sampleRate,
+        //   binSize,
+        // );
+
+        if (p > 0) pitch.current = p;
+        console.log("Pitch: ", pitch);
+        console.log("Aduio context: ", audioContext);
+
+        controller(
+          majorScales["C4"],
+          pitch.current,
+          GAME_BOARD_HEIGHT,
+          setLeftPaddleData,
+        );
+      }
     }
 
     setFrameTime(time);
