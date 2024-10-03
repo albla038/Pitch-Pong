@@ -246,9 +246,14 @@ export default function Pong() {
   const binSize = 16384;
 
   const { audioContext, microphoneStream, error } = useMicrophoneStream();
-  const fftAnalyser = useFFT(audioContext, microphoneStream, binSize);
+  const [fftAnalyserLeft, fftAnalyserRight] = useFFT(
+    audioContext,
+    microphoneStream,
+    binSize,
+  );
 
-  const pitch = useRef(-1);
+  const pitchLeft = useRef(-1);
+  const pitchRight = useRef(-1);
   const initalTime = 0.05;
   const timeBuffer = useRef(initalTime);
 
@@ -257,35 +262,52 @@ export default function Pong() {
     const deltaTimeSeconds = deltaTime / 1000;
 
     // Get pitch from microphone
-    if (audioContext && fftAnalyser) {
-      const dataArray = new Uint8Array(fftAnalyser.frequencyBinCount);
+    if (audioContext && fftAnalyserLeft && fftAnalyserRight) {
+      const dataArrayLeft = new Uint8Array(fftAnalyserLeft.frequencyBinCount);
+      const dataArrayRight = new Uint8Array(fftAnalyserRight.frequencyBinCount);
 
       timeBuffer.current -= deltaTimeSeconds;
       // console.log("Time buffer: ", timeBuffer.current);
 
       if (timeBuffer.current <= 0) {
-        fftAnalyser.getByteFrequencyData(dataArray);
-        const frequencyArray = Array.from(dataArray);
+        fftAnalyserLeft.getByteFrequencyData(dataArrayLeft);
+        fftAnalyserRight.getByteFrequencyData(dataArrayRight);
+        const frequencyArrayLeft = Array.from(dataArrayLeft);
+        const frequencyArrayRight = Array.from(dataArrayRight);
         timeBuffer.current = initalTime;
-        const gatedArray = frequencyArray.map((e) => {
+        const gatedArrayLeft = frequencyArrayLeft.map((e) => {
+          if (e < 48) return 0;
+          else return e;
+        });
+        const gatedArrayRight = frequencyArrayRight.map((e) => {
           if (e < 48) return 0;
           else return e;
         });
 
-        const p = getPitch(gatedArray, audioContext.sampleRate, binSize);
+        const pLeft = getPitch(
+          gatedArrayLeft,
+          audioContext.sampleRate,
+          binSize,
+        );
+        const pRight = getPitch(
+          frequencyArrayLeft,
+          audioContext.sampleRate,
+          binSize,
+        );
         // const pitch = simplePitchAlgo(
         //   frequencyArray,
         //   audioContext.sampleRate,
         //   binSize,
         // );
 
-        if (p > 0) pitch.current = p;
-        console.log("Pitch: ", pitch.current);
+        if (pLeft > 0) pitchLeft.current = pLeft;
+        if (pRight > 0) pitchRight.current = pRight;
+        console.log("Pitch: ", pitchLeft.current);
         // console.log("Audio context: ", audioContext);
 
         controller(
           majorScales["A1"],
-          pitch.current,
+          pitchLeft.current,
           GAME_BOARD_HEIGHT,
           setLeftPaddleData,
         );

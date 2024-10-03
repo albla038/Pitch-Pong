@@ -5,20 +5,40 @@ export function useFFT(
   microphoneStream: MediaStreamAudioSourceNode | null,
   binCount: number,
 ) {
-  const [fftAnalyser, setFftAnalyser] = useState<AnalyserNode | null>(null);
+  const [fftAnalyserLeft, setFftAnalyserLeft] = useState<AnalyserNode | null>(
+    null,
+  );
+  const [fftAnalyserRight, setFftAnalyserRight] = useState<AnalyserNode | null>(
+    null,
+  );
 
   useEffect(() => {
     if (audioContext && microphoneStream) {
       // Create analyser
-      const analyser = audioContext.createAnalyser();
+      const analyserLeft = audioContext.createAnalyser();
+      const analyserRight = audioContext.createAnalyser();
+
+      analyserLeft.fftSize = binCount * 2; // FFT size
+      analyserRight.fftSize = binCount * 2;
+
+      const splitter = audioContext.createChannelSplitter(2);
+      splitter.connect(analyserLeft, 0);
+      splitter.connect(analyserRight, 1);
+
       // Connect microphone to analyser
-      microphoneStream.connect(analyser);
+      microphoneStream.connect(analyserLeft);
+      microphoneStream.connect(analyserRight);
 
-      analyser.fftSize = binCount * 2; // FFT size
-      console.log("FFT size: ", analyser.fftSize);
+      console.log(microphoneStream.channelCount);
 
-      setFftAnalyser(analyser);
+      console.log(
+        "FFT size: ",
+        analyserLeft.fftSize + " " + analyserRight.fftSize,
+      );
+
+      setFftAnalyserLeft(analyserLeft);
+      setFftAnalyserRight(analyserRight);
     }
   }, [audioContext, microphoneStream, binCount]);
-  return fftAnalyser;
+  return [fftAnalyserLeft, fftAnalyserRight];
 }
