@@ -1,4 +1,16 @@
 export const majorScales = {
+  A1: {
+    scaleTones: ["A", "B", "C#", "D", "E", "F#", "G#"],
+    lowestToneFreq: 55,
+    highestToneFreq: 103.83,
+    octaveToneFreq: 110,
+  },
+  E2: {
+    scaleTones: ["E", "F#", "G#", "A", "B", "C#", "D#"],
+    lowestToneFreq: 82.41,
+    highestToneFreq: 155.56,
+    octaveToneFreq: 164.81,
+  },
   "F#2": {
     scaleTones: ["F#", "G#", "A#", "B", "C#", "D#", "E#"],
     lowestToneFreq: 92.5,

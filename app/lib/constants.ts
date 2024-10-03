@@ -17,7 +17,7 @@ export const initialLeftPaddleData = {
   x: 8,
   y: GAME_BOARD_HEIGHT / 2 - 48 / 2,
   width: 8,
-  height: 48,
+  height: 56,
   color: GRAY_50,
 };
 
@@ -25,6 +25,6 @@ export const initialRightPaddleData = {
   x: GAME_BOARD_WIDTH - (8 + 8),
   y: GAME_BOARD_HEIGHT / 2 - 48 / 2,
   width: 8,
-  height: 48,
+  height: 56,
   color: GRAY_50,
 };

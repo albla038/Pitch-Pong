@@ -217,11 +217,21 @@ export default function Pong() {
       stop();
     }
 
+    // // Collision with right boundary
+    // if (ballData.x + ballData.radius > GAME_BOARD_WIDTH) {
+    //   // Game over
+    //   setLeftPlayerScore((prev) => prev + 1);
+    //   stop();
+    // }
+
+    // TODO FOR TESTING ONLY
     // Collision with right boundary
     if (ballData.x + ballData.radius > GAME_BOARD_WIDTH) {
-      // Game over
-      setLeftPlayerScore((prev) => prev + 1);
-      stop();
+      setBallData((prev) => ({
+        ...prev,
+        x: rightPaddleData.x - ballData.radius,
+        velocityX: -prev.velocityX,
+      }));
     }
   }
 
@@ -239,16 +249,18 @@ export default function Pong() {
   const fftAnalyser = useFFT(audioContext, microphoneStream, binSize);
 
   const pitch = useRef(-1);
-  const initalTime = 0.3;
+  const initalTime = 0.05;
   const timeBuffer = useRef(initalTime);
 
   // Loop hook, runs every frame
   useFrameLoop(gameState, (time, deltaTime) => {
+    const deltaTimeSeconds = deltaTime / 1000;
+
     // Get pitch from microphone
     if (audioContext && fftAnalyser) {
       const dataArray = new Uint8Array(fftAnalyser.frequencyBinCount);
 
-      timeBuffer.current -= deltaTime / 1000;
+      timeBuffer.current -= deltaTimeSeconds;
       // console.log("Time buffer: ", timeBuffer.current);
 
       if (timeBuffer.current <= 0) {
@@ -256,7 +268,7 @@ export default function Pong() {
         const frequencyArray = Array.from(dataArray);
         timeBuffer.current = initalTime;
         const gatedArray = frequencyArray.map((e) => {
-          if (e < 24) return 0;
+          if (e < 48) return 0;
           else return e;
         });
 
@@ -268,11 +280,11 @@ export default function Pong() {
         // );
 
         if (p > 0) pitch.current = p;
-        console.log("Pitch: ", pitch);
-        console.log("Aduio context: ", audioContext);
+        console.log("Pitch: ", pitch.current);
+        // console.log("Audio context: ", audioContext);
 
         controller(
-          majorScales["C4"],
+          majorScales["A1"],
           pitch.current,
           GAME_BOARD_HEIGHT,
           setLeftPaddleData,
@@ -281,7 +293,6 @@ export default function Pong() {
     }
 
     setFrameTime(time);
-    const deltaTimeSeconds = deltaTime / 1000;
 
     handleKeyboardInput(deltaTimeSeconds);
 
