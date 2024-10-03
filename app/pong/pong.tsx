@@ -303,7 +303,7 @@ export default function Pong() {
 
         if (pLeft > 0) pitchLeft.current = pLeft;
         if (pRight > 0) pitchRight.current = pRight;
-        console.log("Pitch: ", pitchLeft.current);
+        console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
         // console.log("Audio context: ", audioContext);
 
         controller(
