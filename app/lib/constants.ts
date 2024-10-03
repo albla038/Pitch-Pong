@@ -19,6 +19,7 @@ export const initialLeftPaddleData = {
   width: 8,
   height: 56,
   color: GRAY_50,
+  velocity: 0,
 };
 
 export const initialRightPaddleData = {
@@ -27,4 +28,5 @@ export const initialRightPaddleData = {
   width: 8,
   height: 56,
   color: GRAY_50,
+  velocity: 0,
 };

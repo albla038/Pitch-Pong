@@ -42,8 +42,6 @@ export default function Pong() {
     "initial" | "running" | "paused" | "game over"
   >("initial");
 
-  const pressedKeys = useRef(new Set<string>());
-
   const [leftPaddleData, setLeftPaddleData] = useState(initialLeftPaddleData);
 
   const [rightPaddleData, setRightPaddleData] = useState(
@@ -57,11 +55,58 @@ export default function Pong() {
   // Event listeners
   useEffect(() => {
     function handleAddKey(code: string) {
-      pressedKeys.current.add(code);
+
+      if (code === "KeyW") {
+        setLeftPaddleData((prev) => ({
+          ...prev,
+          velocity: -PADDLE_SPEED,
+        }));
+      }
+      if (code === "KeyS") {
+        setLeftPaddleData((prev) => ({
+          ...prev,
+          velocity: PADDLE_SPEED,
+        }));
+      }
+      if (code === "ArrowUp") {
+        setRightPaddleData((prev) => ({
+          ...prev,
+          velocity: -PADDLE_SPEED,
+        }));
+      }
+      if (code === "ArrowDown") {
+        setRightPaddleData((prev) => ({
+          ...prev,
+          velocity: PADDLE_SPEED,
+        }));
+      }
     }
 
     function handleRemoveKey(code: string) {
-      pressedKeys.current.delete(code);
+      if (code === "KeyW") {
+        setLeftPaddleData((prev) => ({
+          ...prev,
+          velocity: 0,
+        }));
+      }
+      if (code === "KeyS") {
+        setLeftPaddleData((prev) => ({
+          ...prev,
+          velocity: 0,
+        }));
+      }
+      if (code === "ArrowUp") {
+        setRightPaddleData((prev) => ({
+          ...prev,
+          velocity: 0,
+        }));
+      }
+      if (code === "ArrowDown") {
+        setRightPaddleData((prev) => ({
+          ...prev,
+          velocity: 0,
+        }));
+      }
     }
 
     window.addEventListener("keydown", (event) => {
@@ -87,38 +132,17 @@ export default function Pong() {
   }, []);
 
   // Game logic functions
-  function handleKeyboardInput(deltaTimeSeconds: number) {
-    if (pressedKeys.current.has("KeyW")) {
-      movePaddle("left", -PADDLE_SPEED * deltaTimeSeconds);
-    }
 
-    if (pressedKeys.current.has("KeyS")) {
-      movePaddle("left", PADDLE_SPEED * deltaTimeSeconds);
-    }
+  function movePaddles(deltaTimeSeconds: number) {
+    setLeftPaddleData((prev) => ({
+      ...prev,
+      y: prev.y + prev.velocity * deltaTimeSeconds,
+    }));
 
-    if (pressedKeys.current.has("ArrowUp")) {
-      movePaddle("right", -PADDLE_SPEED * deltaTimeSeconds);
-    }
-
-    if (pressedKeys.current.has("ArrowDown")) {
-      movePaddle("right", PADDLE_SPEED * deltaTimeSeconds);
-    }
-  }
-
-  function movePaddle(side: "left" | "right", speed: number) {
-    if (side === "left") {
-      setLeftPaddleData((prev) => ({
-        ...prev,
-        y: prev.y + speed,
-      }));
-    }
-
-    if (side === "right") {
-      setRightPaddleData((prev) => ({
-        ...prev,
-        y: prev.y + speed,
-      }));
-    }
+    setRightPaddleData((prev) => ({
+      ...prev,
+      y: prev.y + prev.velocity * deltaTimeSeconds,
+    }));
   }
 
   function checkPaddleBoundaries() {
@@ -127,6 +151,7 @@ export default function Pong() {
       setLeftPaddleData((prev) => ({
         ...prev,
         y: 0,
+        velocity: 0,
       }));
     }
 
@@ -135,6 +160,7 @@ export default function Pong() {
       setLeftPaddleData((prev) => ({
         ...prev,
         y: GAME_BOARD_HEIGHT - leftPaddleData.height,
+        velocity: 0,
       }));
     }
 
@@ -143,6 +169,7 @@ export default function Pong() {
       setRightPaddleData((prev) => ({
         ...prev,
         y: 0,
+        velocity: 0,
       }));
     }
 
@@ -151,6 +178,7 @@ export default function Pong() {
       setRightPaddleData((prev) => ({
         ...prev,
         y: GAME_BOARD_HEIGHT - rightPaddleData.height,
+        velocity: 0,
       }));
     }
   }
@@ -199,7 +227,7 @@ export default function Pong() {
     // Collision with right paddle
     if (
       ballData.x - ballData.radius <
-        rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
+      rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
       ballData.x + ballData.radius > rightPaddleData.x && // ball is to the right of the right edge of the paddle
       ballData.y + ballData.radius > rightPaddleData.y && // ball is below the top edge of the paddle
       ballData.y + ballData.radius < rightPaddleData.y + rightPaddleData.height // ball is above the bottom edge of the paddle
@@ -262,6 +290,8 @@ export default function Pong() {
   useFrameLoop(gameState, (time, deltaTime) => {
     const deltaTimeSeconds = deltaTime / 1000;
 
+    movePaddles(deltaTimeSeconds);
+
     // Get pitch from microphone
     if (audioContext && fftAnalyserLeft && fftAnalyserRight) {
       const dataArrayLeft = new Uint8Array(fftAnalyserLeft.frequencyBinCount);
@@ -316,8 +346,6 @@ export default function Pong() {
     }
 
     setFrameTime(time);
-
-    handleKeyboardInput(deltaTimeSeconds);
 
     // Move ball if game is running
     if (gameState === "running") {

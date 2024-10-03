@@ -16,6 +16,7 @@ export function controller(
       width: number;
       height: number;
       color: string;
+      velocity: number;
     }>
   >,
 ) {
