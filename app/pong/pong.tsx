@@ -21,6 +21,7 @@ import { useFFT } from "@/app/lib/hooks/useFFT";
 import { simplePitchAlgo } from "@/app/lib/simplePitchAlgo";
 import { controller } from "@/app/pong/controller";
 import { majorScales } from "@/app/lib/data";
+import MusicScale from "@/app/pong/music-scale";
 
 function setInitialBallData() {
   const angle = getRandomAngle();
@@ -249,8 +250,6 @@ export default function Pong() {
   const fftAnalyser = useFFT(audioContext, microphoneStream, binSize);
 
   const pitch = useRef(-1);
-  const initalTime = 0.05;
-  const timeBuffer = useRef(initalTime);
 
   // Loop hook, runs every frame
   useFrameLoop(gameState, (time, deltaTime) => {
@@ -260,36 +259,31 @@ export default function Pong() {
     if (audioContext && fftAnalyser) {
       const dataArray = new Uint8Array(fftAnalyser.frequencyBinCount);
 
-      timeBuffer.current -= deltaTimeSeconds;
-      // console.log("Time buffer: ", timeBuffer.current);
+      fftAnalyser.getByteFrequencyData(dataArray);
+      const frequencyArray = Array.from(dataArray);
+      const gatedArray = frequencyArray.map((e) => {
+        if (e < 48) return 0;
+        else return e;
+      });
 
-      if (timeBuffer.current <= 0) {
-        fftAnalyser.getByteFrequencyData(dataArray);
-        const frequencyArray = Array.from(dataArray);
-        timeBuffer.current = initalTime;
-        const gatedArray = frequencyArray.map((e) => {
-          if (e < 48) return 0;
-          else return e;
-        });
+      const p = getPitch(gatedArray, audioContext.sampleRate, binSize);
+      // const pitch = simplePitchAlgo(
+      //   frequencyArray,
+      //   audioContext.sampleRate,
+      //   binSize,
+      // );
 
-        const p = getPitch(gatedArray, audioContext.sampleRate, binSize);
-        // const pitch = simplePitchAlgo(
-        //   frequencyArray,
-        //   audioContext.sampleRate,
-        //   binSize,
-        // );
+      // If no pitch is detected, keep the previous pitch
+      if (p > 30) pitch.current = p;
+      console.log("Pitch: ", pitch.current);
+      // console.log("Audio context: ", audioContext);
 
-        if (p > 0) pitch.current = p;
-        console.log("Pitch: ", pitch.current);
-        // console.log("Audio context: ", audioContext);
-
-        controller(
-          majorScales["A1"],
-          pitch.current,
-          GAME_BOARD_HEIGHT,
-          setLeftPaddleData,
-        );
-      }
+      controller(
+        majorScales["C4"],
+        pitch.current,
+        GAME_BOARD_HEIGHT,
+        setLeftPaddleData,
+      );
     }
 
     setFrameTime(time);
@@ -340,20 +334,38 @@ export default function Pong() {
           </button>
           <p className="text-3xl">{rightPlayerScore}</p>
         </div>
+
+        {/* Game board area */}
         <div
-          className="relative flex items-center justify-center rounded-md bg-gray-950"
-          style={{ width: GAME_BOARD_WIDTH, height: GAME_BOARD_HEIGHT }}
+          className="flex"
+          style={{
+            width: GAME_BOARD_WIDTH + 2 * 40,
+            height: GAME_BOARD_HEIGHT,
+          }}
         >
-          <HalfWayLine />
-          {gameState === "initial" && (
-            <Title text="press space to start" pulse={false} />
-          )}
-          {gameState === "paused" && (
-            <Title text="paused" pulse={true} frameTime={frameTime} />
-          )}
-          <Paddle {...leftPaddleData} key={"left"} />
-          <Paddle {...rightPaddleData} key={"right"} />
-          <Ball {...ballData} opacity={ballOpacity}></Ball>
+          <MusicScale
+            className="grow rounded-l-md"
+            scaleTones={majorScales["Chromatic"].scaleTones}
+          />
+          <div
+            className="relative flex items-center justify-center bg-gray-950"
+            style={{ width: GAME_BOARD_WIDTH, height: GAME_BOARD_HEIGHT }}
+          >
+            <HalfWayLine />
+            {gameState === "initial" && (
+              <Title text="press space to start" pulse={false} />
+            )}
+            {gameState === "paused" && (
+              <Title text="paused" pulse={true} frameTime={frameTime} />
+            )}
+            <Paddle {...leftPaddleData} key={"left"} />
+            <Paddle {...rightPaddleData} key={"right"} />
+            <Ball {...ballData} opacity={ballOpacity}></Ball>
+          </div>
+          <MusicScale
+            className="grow rounded-r-md"
+            scaleTones={majorScales["Chromatic"].scaleTones}
+          />
         </div>
       </main>
     </div>
