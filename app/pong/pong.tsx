@@ -21,6 +21,7 @@ import { useFFT } from "@/app/lib/hooks/useFFT";
 import { simplePitchAlgo } from "@/app/lib/simplePitchAlgo";
 import { controller } from "@/app/pong/controller";
 import { majorScales } from "@/app/lib/data";
+import MusicScale from "@/app/pong/music-scale";
 
 function setInitialBallData() {
   const angle = getRandomAngle();
@@ -362,20 +363,38 @@ export default function Pong() {
           </button>
           <p className="text-3xl">{rightPlayerScore}</p>
         </div>
+
+        {/* Game board area */}
         <div
-          className="relative flex items-center justify-center rounded-md bg-gray-950"
-          style={{ width: GAME_BOARD_WIDTH, height: GAME_BOARD_HEIGHT }}
+          className="flex"
+          style={{
+            width: GAME_BOARD_WIDTH + 2 * 40,
+            height: GAME_BOARD_HEIGHT,
+          }}
         >
-          <HalfWayLine />
-          {gameState === "initial" && (
-            <Title text="press space to start" pulse={false} />
-          )}
-          {gameState === "paused" && (
-            <Title text="paused" pulse={true} frameTime={frameTime} />
-          )}
-          <Paddle {...leftPaddleData} key={"left"} />
-          <Paddle {...rightPaddleData} key={"right"} />
-          <Ball {...ballData} opacity={ballOpacity}></Ball>
+          <MusicScale
+            className="grow rounded-l-md"
+            scaleTones={majorScales["Chromatic"].scaleTones}
+          />
+          <div
+            className="relative flex items-center justify-center bg-gray-950"
+            style={{ width: GAME_BOARD_WIDTH, height: GAME_BOARD_HEIGHT }}
+          >
+            <HalfWayLine />
+            {gameState === "initial" && (
+              <Title text="press space to start" pulse={false} />
+            )}
+            {gameState === "paused" && (
+              <Title text="paused" pulse={true} frameTime={frameTime} />
+            )}
+            <Paddle {...leftPaddleData} key={"left"} />
+            <Paddle {...rightPaddleData} key={"right"} />
+            <Ball {...ballData} opacity={ballOpacity}></Ball>
+          </div>
+          <MusicScale
+            className="grow rounded-r-md"
+            scaleTones={majorScales["Chromatic"].scaleTones}
+          />
         </div>
       </main>
     </div>

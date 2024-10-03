@@ -29,4 +29,23 @@ export const majorScales = {
     highestToneFreq: 493.88,
     octaveToneFreq: 523.25,
   },
+  Chromatic: {
+    scaleTones: [
+      { tone: "C", degree: 0 },
+      { tone: "C#", degree: 1 },
+      { tone: "D", degree: 2 },
+      { tone: "D#", degree: 3 },
+      { tone: "E", degree: 4 },
+      { tone: "F", degree: 5 },
+      { tone: "F#", degree: 6 },
+      { tone: "G", degree: 7 },
+      { tone: "G#", degree: 8 },
+      { tone: "A", degree: 9 },
+      { tone: "A#", degree: 10 },
+      { tone: "B", degree: 11 },
+    ],
+    lowestToneFreq: 261.63,
+    highestToneFreq: 493.88,
+    octaveToneFreq: 523.25,
+  },
 };
