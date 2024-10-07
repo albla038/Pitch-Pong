@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 
-export function controller(
+export function pitchController(
   scale: {
     scaleTones: string[];
     lowestToneFreq: number;

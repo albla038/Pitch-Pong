@@ -19,7 +19,7 @@ import { useEffect, useRef, useState } from "react";
 import { useMicrophoneStream } from "../lib/hooks/useMicrophoneStream";
 import { useFFT } from "@/app/lib/hooks/useFFT";
 import { simplePitchAlgo } from "@/app/lib/simplePitchAlgo";
-import { controller } from "@/app/pong/controller";
+import { pitchController } from "@/app/lib/pitchController";
 import { majorScales } from "@/app/lib/data";
 import MusicScale from "@/app/pong/music-scale";
 
@@ -55,7 +55,6 @@ export default function Pong() {
   // Event listeners
   useEffect(() => {
     function handleAddKey(code: string) {
-
       if (code === "KeyW") {
         setLeftPaddleData((prev) => ({
           ...prev,
@@ -227,7 +226,7 @@ export default function Pong() {
     // Collision with right paddle
     if (
       ballData.x - ballData.radius <
-      rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
+        rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
       ballData.x + ballData.radius > rightPaddleData.x && // ball is to the right of the right edge of the paddle
       ballData.y + ballData.radius > rightPaddleData.y && // ball is below the top edge of the paddle
       ballData.y + ballData.radius < rightPaddleData.y + rightPaddleData.height // ball is above the bottom edge of the paddle
@@ -336,7 +335,7 @@ export default function Pong() {
         console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
         // console.log("Audio context: ", audioContext);
 
-        controller(
+        pitchController(
           majorScales["A1"],
           pitchLeft.current,
           GAME_BOARD_HEIGHT,
