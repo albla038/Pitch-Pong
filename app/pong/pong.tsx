@@ -320,7 +320,7 @@ export default function Pong() {
           binSize,
         );
         const pRight = getPitch(
-          frequencyArrayLeft,
+          gatedArrayRight,
           audioContext.sampleRate,
           binSize,
         );
@@ -330,9 +330,9 @@ export default function Pong() {
         //   binSize,
         // );
 
-        if (pLeft > 0) pitchLeft.current = pLeft;
-        if (pRight > 0) pitchRight.current = pRight;
-        console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
+        if (pLeft > 20) pitchLeft.current = pLeft;
+        if (pRight > 20) pitchRight.current = pRight;
+        // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
         // console.log("Audio context: ", audioContext);
 
         pitchController(

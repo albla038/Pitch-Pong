@@ -12,6 +12,8 @@ export function octaver(
   octaveToneFreq: number = 2 * lowestToneFreq,
   pitch: number,
 ) {
+  if (pitch <= 0) return pitch;
+
   if (pitch < lowestToneFreq) {
     do {
       pitch *= 2;

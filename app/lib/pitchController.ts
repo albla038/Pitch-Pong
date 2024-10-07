@@ -41,5 +41,7 @@ export function pitchController(
   //   "y: ",
   //   y,
   // );
+
+  console.log("pitch: ", inputPitch, "octaverPitch: ", octaverPitch);
   setPaddleData((prev) => ({ ...prev, y }));
 }
