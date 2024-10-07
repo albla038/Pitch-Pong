@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
+import { octaver } from "./utils";
 
 export function pitchController(
   scale: {
@@ -20,8 +21,13 @@ export function pitchController(
     }>
   >,
 ) {
+  const octaverPitch = octaver(
+    scale.lowestToneFreq,
+    scale.octaveToneFreq,
+    inputPitch,
+  );
   const frequencyRange = scale.highestToneFreq - scale.lowestToneFreq;
-  const relativePitch = inputPitch - scale.lowestToneFreq;
+  const relativePitch = octaverPitch - scale.lowestToneFreq;
   const fraction = relativePitch / frequencyRange;
   const y = pixelRange - fraction * pixelRange;
 

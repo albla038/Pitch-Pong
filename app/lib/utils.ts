@@ -7,6 +7,25 @@ export function getRandomAngle() {
   }
 }
 
+export function octaver(
+  lowestToneFreq: number,
+  octaveToneFreq: number = 2 * lowestToneFreq,
+  pitch: number,
+) {
+  if (pitch < lowestToneFreq) {
+    do {
+      pitch *= 2;
+    } while (pitch < lowestToneFreq);
+    return pitch;
+  } else if (pitch > octaveToneFreq) {
+    do {
+      pitch /= 2;
+    } while (pitch > octaveToneFreq);
+    return pitch;
+  }
+  return pitch;
+}
+
 export function getPitch(
   frequencyArray: number[],
   sampleRate: number,

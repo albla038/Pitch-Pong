@@ -336,7 +336,7 @@ export default function Pong() {
         // console.log("Audio context: ", audioContext);
 
         pitchController(
-          majorScales["A1"],
+          majorScales["C4"],
           pitchLeft.current,
           GAME_BOARD_HEIGHT,
           setLeftPaddleData,
