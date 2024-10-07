@@ -53,7 +53,6 @@ export default function Pong() {
   const [rightPlayerScore, setRightPlayerScore] = useState(0);
   const [ballSpeedMultiplier, setBallSpeedMultiplier] = useState(1);
 
-
   // Event listeners
   useEffect(() => {
     function handleAddKey(code: string) {
@@ -132,7 +131,6 @@ export default function Pong() {
     };
   }, []);
 
-
   function moveRightPaddleAI(deltaTimeSeconds: number) {
     setRightPaddleData((prev) => {
       const paddleCenterY = prev.y + prev.height / 2;
@@ -140,8 +138,8 @@ export default function Pong() {
       const distance = ballY - paddleCenterY;
 
       //simple proportional controller
-      const maxSpeed = PADDLE_SPEED * 0.85;//ai paddle speed (adjust for difficulty)
-      let velocity = distance * 5;// Proportional gain(adjust for responsivnes)
+      const maxSpeed = PADDLE_SPEED * 0.85; //ai paddle speed (adjust for difficulty)
+      let velocity = distance * 5; // Proportional gain(adjust for responsivnes)
 
       //clamp the velocity to the maximum speed
       if (velocity > maxSpeed) velocity = maxSpeed;
@@ -253,7 +251,7 @@ export default function Pong() {
     // Collision with right paddle
     if (
       ballData.x - ballData.radius <
-      rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
+        rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
       ballData.x + ballData.radius > rightPaddleData.x && // ball is to the right of the right edge of the paddle
       ballData.y + ballData.radius > rightPaddleData.y && // ball is below the top edge of the paddle
       ballData.y + ballData.radius < rightPaddleData.y + rightPaddleData.height // ball is above the bottom edge of the paddle
@@ -314,85 +312,92 @@ export default function Pong() {
   const timeBuffer = useRef(initalTime);
 
   // Loop hook, runs every frame
-  useFrameLoop(gameState, ballData, leftPaddleData, rightPaddleData, (time, deltaTime) => {
-    const deltaTimeSeconds = deltaTime / 1000;
+  useFrameLoop(
+    gameState,
+    ballData,
+    leftPaddleData,
+    rightPaddleData,
+    (time, deltaTime) => {
+      const deltaTimeSeconds = deltaTime / 1000;
 
-    setBallSpeedMultiplier((prevmultiplier) => {
+      movePaddles(deltaTimeSeconds);
 
-      const incrementRate = 0.01; // How much to increase per second
-      const maxMultiplier = 2.5;  // Maximum speed multiplier
-      const newMultiplier = prevmultiplier + incrementRate * deltaTimeSeconds;
-      return Math.min(newMultiplier, maxMultiplier);
-
-    });
-
-    movePaddles(deltaTimeSeconds);
-
-    // Get pitch from microphone
-    if (audioContext && fftAnalyserLeft && fftAnalyserRight) {
-      const dataArrayLeft = new Uint8Array(fftAnalyserLeft.frequencyBinCount);
-      const dataArrayRight = new Uint8Array(fftAnalyserRight.frequencyBinCount);
-
-      timeBuffer.current -= deltaTimeSeconds;
-      // console.log("Time buffer: ", timeBuffer.current);
-
-      if (timeBuffer.current <= 0) {
-        fftAnalyserLeft.getByteFrequencyData(dataArrayLeft);
-        fftAnalyserRight.getByteFrequencyData(dataArrayRight);
-        const frequencyArrayLeft = Array.from(dataArrayLeft);
-        const frequencyArrayRight = Array.from(dataArrayRight);
-        timeBuffer.current = initalTime;
-        const gatedArrayLeft = frequencyArrayLeft.map((e) => {
-          if (e < 48) return 0;
-          else return e;
-        });
-        const gatedArrayRight = frequencyArrayRight.map((e) => {
-          if (e < 48) return 0;
-          else return e;
-        });
-
-        const pLeft = getPitch(
-          gatedArrayLeft,
-          audioContext.sampleRate,
-          binSize,
+      // Get pitch from microphone
+      if (audioContext && fftAnalyserLeft && fftAnalyserRight) {
+        const dataArrayLeft = new Uint8Array(fftAnalyserLeft.frequencyBinCount);
+        const dataArrayRight = new Uint8Array(
+          fftAnalyserRight.frequencyBinCount,
         );
-        const pRight = getPitch(
-          gatedArrayRight,
-          audioContext.sampleRate,
-          binSize,
-        );
-        // const pitch = simplePitchAlgo(
-        //   frequencyArray,
-        //   audioContext.sampleRate,
-        //   binSize,
-        // );
 
-        if (pLeft > 20) pitchLeft.current = pLeft;
-        if (pRight > 20) pitchRight.current = pRight;
-        // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
-        // console.log("Audio context: ", audioContext);
+        timeBuffer.current -= deltaTimeSeconds;
+        // console.log("Time buffer: ", timeBuffer.current);
 
-        // pitchController(
-        //   majorScales["A1"],
-        //   pitchLeft.current,
-        //   GAME_BOARD_HEIGHT,
-        //   setLeftPaddleData,
-        // );
+        if (timeBuffer.current <= 0) {
+          fftAnalyserLeft.getByteFrequencyData(dataArrayLeft);
+          fftAnalyserRight.getByteFrequencyData(dataArrayRight);
+          const frequencyArrayLeft = Array.from(dataArrayLeft);
+          const frequencyArrayRight = Array.from(dataArrayRight);
+          timeBuffer.current = initalTime;
+          const gatedArrayLeft = frequencyArrayLeft.map((e) => {
+            if (e < 48) return 0;
+            else return e;
+          });
+          const gatedArrayRight = frequencyArrayRight.map((e) => {
+            if (e < 48) return 0;
+            else return e;
+          });
+
+          const pLeft = getPitch(
+            gatedArrayLeft,
+            audioContext.sampleRate,
+            binSize,
+          );
+          const pRight = getPitch(
+            gatedArrayRight,
+            audioContext.sampleRate,
+            binSize,
+          );
+          // const pitch = simplePitchAlgo(
+          //   frequencyArray,
+          //   audioContext.sampleRate,
+          //   binSize,
+          // );
+
+          if (pLeft > 20) pitchLeft.current = pLeft;
+          if (pRight > 20) pitchRight.current = pRight;
+          // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
+          // console.log("Audio context: ", audioContext);
+
+          // pitchController(
+          //   majorScales["C4"],
+          //   pitchLeft.current,
+          //   GAME_BOARD_HEIGHT,
+          //   setLeftPaddleData,
+          // );
+        }
       }
-    }
 
-    setFrameTime(time);
+      setFrameTime(time);
 
-    // Move ball if game is running
-    if (gameState === "running") {
-      moveBall(deltaTimeSeconds);
-    }
+      // Move ball if game is running
+      if (gameState === "running") {
+        moveBall(deltaTimeSeconds);
 
-    // If game is over, count down to start new game
-    if (gameState === "game over") {
-      setCountDown((prev) => prev - deltaTimeSeconds);
-    }
-  });
+        setBallSpeedMultiplier((prevMultiplier) => {
+          const incrementRate = 0.01; // How much to increase per second
+          const maxMultiplier = 2.5; // Maximum speed multiplier
+          const newMultiplier =
+            prevMultiplier + incrementRate * deltaTimeSeconds;
+          return Math.min(newMultiplier, maxMultiplier);
+        });
+      }
+
+      // If game is over, count down to start new game
+      if (gameState === "game over") {
+        setCountDown((prev) => prev - deltaTimeSeconds);
+      }
+    },
+  );
 
   let ballOpacity = 1;
 
@@ -462,7 +467,7 @@ export default function Pong() {
         </div>
 
         {/* Ball Speed Multiplier display here */}
-        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 text-gray-50">
+        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 transform text-gray-50">
           Ball Speed Multiplier: {ballSpeedMultiplier.toFixed(2)}
         </div>
       </main>
