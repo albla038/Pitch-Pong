@@ -51,6 +51,8 @@ export default function Pong() {
   const [ballData, setBallData] = useState(setInitialBallData);
   const [leftPlayerScore, setLeftPlayerScore] = useState(0);
   const [rightPlayerScore, setRightPlayerScore] = useState(0);
+  const [ballSpeedMultiplier, setBallSpeedMultiplier] = useState(1);
+
 
   // Event listeners
   useEffect(() => {
@@ -130,6 +132,29 @@ export default function Pong() {
     };
   }, []);
 
+
+  function moveRightPaddleAI(deltaTimeSeconds: number) {
+    setRightPaddleData((prev) => {
+      const paddleCenterY = prev.y + prev.height / 2;
+      const ballY = ballData.y;
+      const distance = ballY - paddleCenterY;
+
+      //simple proportional controller
+      const maxSpeed = PADDLE_SPEED * 0.85;//ai paddle speed (adjust for difficulty)
+      let velocity = distance * 5;// Proportional gain(adjust for responsivnes)
+
+      //clamp the velocity to the maximum speed
+      if (velocity > maxSpeed) velocity = maxSpeed;
+      if (velocity < -maxSpeed) velocity = -maxSpeed;
+      const newY = prev.y + velocity * deltaTimeSeconds;
+
+      return {
+        ...prev,
+        y: newY,
+      };
+    });
+  }
+
   // Game logic functions
 
   function movePaddles(deltaTimeSeconds: number) {
@@ -142,6 +167,8 @@ export default function Pong() {
       ...prev,
       y: prev.y + prev.velocity * deltaTimeSeconds,
     }));
+
+    moveRightPaddleAI(deltaTimeSeconds);
   }
 
   function checkPaddleBoundaries() {
@@ -185,8 +212,8 @@ export default function Pong() {
   function moveBall(deltaTimeSeconds: number) {
     setBallData((prev) => ({
       ...prev,
-      x: prev.x + prev.velocityX * deltaTimeSeconds,
-      y: prev.y + prev.velocityY * deltaTimeSeconds,
+      x: prev.x + prev.velocityX * deltaTimeSeconds * ballSpeedMultiplier,
+      y: prev.y + prev.velocityY * deltaTimeSeconds * ballSpeedMultiplier,
     }));
   }
 
@@ -226,7 +253,7 @@ export default function Pong() {
     // Collision with right paddle
     if (
       ballData.x - ballData.radius <
-        rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
+      rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
       ballData.x + ballData.radius > rightPaddleData.x && // ball is to the right of the right edge of the paddle
       ballData.y + ballData.radius > rightPaddleData.y && // ball is below the top edge of the paddle
       ballData.y + ballData.radius < rightPaddleData.y + rightPaddleData.height // ball is above the bottom edge of the paddle
@@ -246,25 +273,26 @@ export default function Pong() {
     }
 
     // // Collision with right boundary
-    // if (ballData.x + ballData.radius > GAME_BOARD_WIDTH) {
-    //   // Game over
-    //   setLeftPlayerScore((prev) => prev + 1);
-    //   stop();
-    // }
+    if (ballData.x + ballData.radius > GAME_BOARD_WIDTH) {
+      // Game over
+      setLeftPlayerScore((prev) => prev + 1);
+      stop();
+    }
 
     // TODO FOR TESTING ONLY
     // Collision with right boundary
-    if (ballData.x + ballData.radius > GAME_BOARD_WIDTH) {
-      setBallData((prev) => ({
-        ...prev,
-        x: rightPaddleData.x - ballData.radius,
-        velocityX: -prev.velocityX,
-      }));
-    }
+    // if (ballData.x + ballData.radius > GAME_BOARD_WIDTH) {
+    //   setBallData((prev) => ({
+    //     ...prev,
+    //     x: rightPaddleData.x - ballData.radius,
+    //     velocityX: -prev.velocityX,
+    //   }));
+    // }
   }
 
   function stop() {
     setBallData(setInitialBallData);
+    setBallSpeedMultiplier(1); // Reset the multiplier
     setGameState("game over");
   }
 
@@ -286,8 +314,17 @@ export default function Pong() {
   const timeBuffer = useRef(initalTime);
 
   // Loop hook, runs every frame
-  useFrameLoop(gameState, (time, deltaTime) => {
+  useFrameLoop(gameState, ballData, leftPaddleData, rightPaddleData, (time, deltaTime) => {
     const deltaTimeSeconds = deltaTime / 1000;
+
+    setBallSpeedMultiplier((prevmultiplier) => {
+
+      const incrementRate = 0.01; // How much to increase per second
+      const maxMultiplier = 2.5;  // Maximum speed multiplier
+      const newMultiplier = prevmultiplier + incrementRate * deltaTimeSeconds;
+      return Math.min(newMultiplier, maxMultiplier);
+
+    });
 
     movePaddles(deltaTimeSeconds);
 
@@ -335,12 +372,12 @@ export default function Pong() {
         // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
         // console.log("Audio context: ", audioContext);
 
-        pitchController(
-          majorScales["C4"],
-          pitchLeft.current,
-          GAME_BOARD_HEIGHT,
-          setLeftPaddleData,
-        );
+        // pitchController(
+        //   majorScales["A1"],
+        //   pitchLeft.current,
+        //   GAME_BOARD_HEIGHT,
+        //   setLeftPaddleData,
+        // );
       }
     }
 
@@ -422,6 +459,11 @@ export default function Pong() {
             className="grow rounded-r-md"
             scaleTones={majorScales["Chromatic"].scaleTones}
           />
+        </div>
+
+        {/* Ball Speed Multiplier display here */}
+        <div className="absolute bottom-3 left-1/2 transform -translate-x-1/2 text-gray-50">
+          Ball Speed Multiplier: {ballSpeedMultiplier.toFixed(2)}
         </div>
       </main>
     </div>
