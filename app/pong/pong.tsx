@@ -368,12 +368,13 @@ export default function Pong() {
           // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
           // console.log("Audio context: ", audioContext);
 
-          // pitchController(
-          //   majorScales["C4"],
-          //   pitchLeft.current,
-          //   GAME_BOARD_HEIGHT,
-          //   setLeftPaddleData,
-          // );
+          pitchController(
+            majorScales["C4"],
+            pitchLeft.current,
+            deltaTimeSeconds,
+            GAME_BOARD_HEIGHT,
+            setLeftPaddleData,
+          );
         }
       }
 
