@@ -4,7 +4,7 @@ import { PADDLE_SPEED } from "./constants";
 
 export function pitchController(
   scale: {
-    scaleTones: string[];
+    scaleTones: string[] | { tone: string; degree: number }[];
     lowestToneFreq: number;
     highestToneFreq: number;
     octaveToneFreq: number;
@@ -37,7 +37,7 @@ export function pitchController(
 
     const currentY = prevPaddleData.y + prevPaddleData.height / 2; // Use paddle center
     const error = desiredY - currentY;
-    const gain = 10; // Adjust this value to control responsiveness
+    const gain = 100; // Adjust this value to control responsiveness
     let velocity = error * gain;
 
     const maxSpeed = PADDLE_SPEED * 2;
@@ -47,8 +47,8 @@ export function pitchController(
     const newY = prevPaddleData.y + velocity * deltaTimeSeconds;
 
     console.log(
-      "New y: ",
-      newY,
+      // "New y: ",
+      // newY,
       "pitch: ",
       inputPitch,
       "octaverPitch: ",

@@ -1,6 +1,19 @@
 export const majorScales = {
   A1: {
-    scaleTones: ["A", "B", "C#", "D", "E", "F#", "G#"],
+    scaleTones: [
+      { tone: "A", degree: 0 },
+      { tone: "A#", degree: 1 },
+      { tone: "B", degree: 2 },
+      { tone: "C", degree: 3 },
+      { tone: "C#", degree: 4 },
+      { tone: "D", degree: 5 },
+      { tone: "D#", degree: 6 },
+      { tone: "E", degree: 7 },
+      { tone: "F", degree: 8 },
+      { tone: "F#", degree: 9 },
+      { tone: "G", degree: 10 },
+      { tone: "G#", degree: 11 },
+    ],
     lowestToneFreq: 55,
     highestToneFreq: 103.83,
     octaveToneFreq: 110,

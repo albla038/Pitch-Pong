@@ -22,6 +22,7 @@ import { simplePitchAlgo } from "@/app/lib/simplePitchAlgo";
 import { pitchController } from "@/app/lib/pitchController";
 import { majorScales } from "@/app/lib/data";
 import MusicScale from "@/app/pong/music-scale";
+import Visualizer from "@/app/pong/visualizer";
 
 function setInitialBallData() {
   const angle = getRandomAngle();
@@ -339,11 +340,11 @@ export default function Pong() {
           const frequencyArrayRight = Array.from(dataArrayRight);
           timeBuffer.current = initalTime;
           const gatedArrayLeft = frequencyArrayLeft.map((e) => {
-            if (e < 48) return 0;
+            if (e < 128) return 0;
             else return e;
           });
           const gatedArrayRight = frequencyArrayRight.map((e) => {
-            if (e < 48) return 0;
+            if (e < 128) return 0;
             else return e;
           });
 
@@ -369,7 +370,7 @@ export default function Pong() {
           // console.log("Audio context: ", audioContext);
 
           pitchController(
-            majorScales["C4"],
+            majorScales["A1"],
             pitchLeft.current,
             deltaTimeSeconds,
             GAME_BOARD_HEIGHT,
@@ -419,7 +420,7 @@ export default function Pong() {
 
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-gray-100">
-      <main className="relative flex h-[724px] w-[1024px] flex-col items-center justify-center rounded-md bg-gray-900">
+      <main className="relative flex h-[724px] w-[1524px] flex-col items-center justify-center rounded-md bg-gray-900">
         <div className="absolute left-1/2 top-3 flex w-[800px] -translate-x-1/2 items-end justify-around text-center font-mono text-gray-50">
           <p className="text-3xl">{leftPlayerScore}</p>
           <button
@@ -438,13 +439,14 @@ export default function Pong() {
         <div
           className="flex"
           style={{
-            width: GAME_BOARD_WIDTH + 2 * 40,
+            width: GAME_BOARD_WIDTH + 2 * 160,
             height: GAME_BOARD_HEIGHT,
           }}
         >
+          <Visualizer fftAnalyser={fftAnalyserRight} side="left" />
           <MusicScale
             className="grow rounded-l-md"
-            scaleTones={majorScales["Chromatic"].scaleTones}
+            scaleTones={majorScales["A1"].scaleTones}
           />
           <div
             className="relative flex items-center justify-center bg-gray-950"
@@ -463,8 +465,9 @@ export default function Pong() {
           </div>
           <MusicScale
             className="grow rounded-r-md"
-            scaleTones={majorScales["Chromatic"].scaleTones}
+            scaleTones={majorScales["A1"].scaleTones}
           />
+          <Visualizer fftAnalyser={fftAnalyserRight} side="right" />
         </div>
 
         {/* Ball Speed Multiplier display here */}
