@@ -46,14 +46,14 @@ export function pitchController(
 
     const newY = prevPaddleData.y + velocity * deltaTimeSeconds;
 
-    console.log(
-      // "New y: ",
-      // newY,
-      "pitch: ",
-      inputPitch,
-      "octaverPitch: ",
-      octaverPitch,
-    );
+    // console.log(
+    //   // "New y: ",
+    //   // newY,
+    //   "pitch: ",
+    //   inputPitch,
+    //   "octaverPitch: ",
+    //   octaverPitch,
+    // );
 
     return { ...prevPaddleData, y: newY };
   });

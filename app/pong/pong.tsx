@@ -366,7 +366,7 @@ export default function Pong() {
 
           if (pLeft > 20) pitchLeft.current = pLeft;
           if (pRight > 20) pitchRight.current = pRight;
-          // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
+          console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
           // console.log("Audio context: ", audioContext);
 
           pitchController(
@@ -443,7 +443,7 @@ export default function Pong() {
             height: GAME_BOARD_HEIGHT,
           }}
         >
-          <Visualizer fftAnalyser={fftAnalyserRight} side="left" />
+          <Visualizer fftAnalyser={fftAnalyserLeft} side="left" />
           <MusicScale
             className="grow rounded-l-md"
             scaleTones={majorScales["A1"].scaleTones}
