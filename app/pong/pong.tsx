@@ -307,10 +307,8 @@ export default function Pong() {
     binSize,
   );
 
-  const pitchLeft = useRef(-1);
-  const pitchRight = useRef(-1);
-  const initalTime = 0.05;
-  const timeBuffer = useRef(initalTime);
+  const pitchLeft = useRef(0);
+  const pitchRight = useRef(0);
 
   // Loop hook, runs every frame
   useFrameLoop(
@@ -330,54 +328,49 @@ export default function Pong() {
           fftAnalyserRight.frequencyBinCount,
         );
 
-        timeBuffer.current -= deltaTimeSeconds;
-        // console.log("Time buffer: ", timeBuffer.current);
+        fftAnalyserLeft.getByteFrequencyData(dataArrayLeft);
+        fftAnalyserRight.getByteFrequencyData(dataArrayRight);
+        const frequencyArrayLeft = Array.from(dataArrayLeft);
+        const frequencyArrayRight = Array.from(dataArrayRight);
+        const gatedArrayLeft = frequencyArrayLeft.map((e) => {
+          if (e < 128) return 0;
+          else return e;
+        });
+        const gatedArrayRight = frequencyArrayRight.map((e) => {
+          if (e < 128) return 0;
+          else return e;
+        });
 
-        if (timeBuffer.current <= 0) {
-          fftAnalyserLeft.getByteFrequencyData(dataArrayLeft);
-          fftAnalyserRight.getByteFrequencyData(dataArrayRight);
-          const frequencyArrayLeft = Array.from(dataArrayLeft);
-          const frequencyArrayRight = Array.from(dataArrayRight);
-          timeBuffer.current = initalTime;
-          const gatedArrayLeft = frequencyArrayLeft.map((e) => {
-            if (e < 128) return 0;
-            else return e;
-          });
-          const gatedArrayRight = frequencyArrayRight.map((e) => {
-            if (e < 128) return 0;
-            else return e;
-          });
+        const pLeft = getPitch(
+          gatedArrayLeft,
+          audioContext.sampleRate,
+          binSize,
+        );
+        const pRight = getPitch(
+          gatedArrayRight,
+          audioContext.sampleRate,
+          binSize,
+        );
+        // const pitch = simplePitchAlgo(
+        //   frequencyArray,
+        //   audioContext.sampleRate,
+        //   binSize,
+        // );
 
-          const pLeft = getPitch(
-            gatedArrayLeft,
-            audioContext.sampleRate,
-            binSize,
-          );
-          const pRight = getPitch(
-            gatedArrayRight,
-            audioContext.sampleRate,
-            binSize,
-          );
-          // const pitch = simplePitchAlgo(
-          //   frequencyArray,
-          //   audioContext.sampleRate,
-          //   binSize,
-          // );
+        if (pLeft > 20) pitchLeft.current = pLeft;
+        if (pRight > 20) pitchRight.current = pRight;
+        // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
+        // console.log("Audio context: ", audioContext);
 
-          if (pLeft > 20) pitchLeft.current = pLeft;
-          if (pRight > 20) pitchRight.current = pRight;
-          // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
-          // console.log("Audio context: ", audioContext);
-
-          pitchController(
-            majorScales["Chromatic"],
-            pitchLeft.current,
-            deltaTimeSeconds,
-            GAME_BOARD_HEIGHT,
-            setLeftPaddleData,
-          );
-        }
+        pitchController(
+          majorScales["Chromatic"],
+          pitchLeft.current,
+          deltaTimeSeconds,
+          GAME_BOARD_HEIGHT,
+          setLeftPaddleData,
+        );
       }
+
 
       setFrameTime(time);
 

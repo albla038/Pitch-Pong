@@ -5,9 +5,9 @@ import { PADDLE_SPEED } from "./constants";
 export function pitchController(
   scale: {
     scaleTones: string[] | { tone: string; degree: number }[];
-    lowestToneFreq: number; // 262.63
-    highestToneFreq: number; // 493.88
-    octaveToneFreq: number; // 523.25
+    lowestToneFreq: number;
+    highestToneFreq: number;
+    octaveToneFreq: number;
   },
   inputPitch: number,
   deltaTimeSeconds: number,
@@ -40,7 +40,7 @@ export function pitchController(
     const gain = 8; // Adjust this value to control responsiveness
     let velocity = error * gain;
 
-    const maxSpeed = PADDLE_SPEED * 4;
+    const maxSpeed = PADDLE_SPEED;
     if (velocity > maxSpeed) velocity = maxSpeed;
     if (velocity < -maxSpeed) velocity = -maxSpeed;
 
