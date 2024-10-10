@@ -252,7 +252,7 @@ export default function Pong() {
     // Collision with right paddle
     if (
       ballData.x - ballData.radius <
-        rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
+      rightPaddleData.x + rightPaddleData.width && // ball is to the right of the right edge of the paddle
       ballData.x + ballData.radius > rightPaddleData.x && // ball is to the right of the right edge of the paddle
       ballData.y + ballData.radius > rightPaddleData.y && // ball is below the top edge of the paddle
       ballData.y + ballData.radius < rightPaddleData.y + rightPaddleData.height // ball is above the bottom edge of the paddle
@@ -366,11 +366,11 @@ export default function Pong() {
 
           if (pLeft > 20) pitchLeft.current = pLeft;
           if (pRight > 20) pitchRight.current = pRight;
-          console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
+          // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
           // console.log("Audio context: ", audioContext);
 
           pitchController(
-            majorScales["A1"],
+            majorScales["Chromatic"],
             pitchLeft.current,
             deltaTimeSeconds,
             GAME_BOARD_HEIGHT,
@@ -446,7 +446,7 @@ export default function Pong() {
           <Visualizer fftAnalyser={fftAnalyserLeft} side="left" />
           <MusicScale
             className="grow rounded-l-md"
-            scaleTones={majorScales["A1"].scaleTones}
+            scaleTones={majorScales["Chromatic"].scaleTones}
           />
           <div
             className="relative flex items-center justify-center bg-gray-950"
@@ -465,7 +465,7 @@ export default function Pong() {
           </div>
           <MusicScale
             className="grow rounded-r-md"
-            scaleTones={majorScales["A1"].scaleTones}
+            scaleTones={majorScales["Chromatic"].scaleTones}
           />
           <Visualizer fftAnalyser={fftAnalyserRight} side="right" />
         </div>

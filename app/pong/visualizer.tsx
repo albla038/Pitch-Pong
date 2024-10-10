@@ -16,22 +16,18 @@ export default function Visualizer({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) {
-      console.log("Visualizer: Canvas failed");
       return;
     }
 
     const ctx = canvas.getContext("2d");
     if (!ctx) {
-      console.log("Visualizer: Context failed");
       return;
     }
 
     if (!fftAnalyser) {
-      console.log("Visualizer: fftAnalyser failed");
       return;
     }
 
-    //console.log("Visualizer: fftAnalyser success");
 
     const dataArray = new Uint8Array(fftAnalyser.frequencyBinCount);
     fftAnalyser.getByteFrequencyData(dataArray);
@@ -39,8 +35,7 @@ export default function Visualizer({
     const barArray: Bar[] = [];
     const numOfBars = 100;
 
-    // const barX = side === "right" ? 0 : canvas.width;
-    const barX = 0;
+    const barX = side === "right" ? 0 : canvas.width;
 
     for (let i = 0; i < numOfBars; i++) {
       const bar = new Bar(
@@ -61,7 +56,7 @@ export default function Visualizer({
       fftAnalyser.getByteFrequencyData(dataArray);
       const frequencyArray = Array.from(dataArray);
       const slicedArray = frequencyArray.slice(0, numOfBars * sumNum);
-      console.log(`Visualizer: ${side} array: `, slicedArray[100]);
+      // console.log(`Visualizer: ${side} array: `, slicedArray[100]);
 
       barArray.forEach((bar, index) => {
         let amp = 0;
@@ -69,7 +64,7 @@ export default function Visualizer({
           amp += slicedArray[i];
         }
 
-        bar.width = (amp / sumNum / 256) * canvas.width;
+        bar.width = (amp / sumNum / 256) * canvas.width * (side === "left" ? -1 : 1);
         bar.draw(ctx);
       });
 

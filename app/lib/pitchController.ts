@@ -5,13 +5,13 @@ import { PADDLE_SPEED } from "./constants";
 export function pitchController(
   scale: {
     scaleTones: string[] | { tone: string; degree: number }[];
-    lowestToneFreq: number;
-    highestToneFreq: number;
-    octaveToneFreq: number;
+    lowestToneFreq: number; // 262.63
+    highestToneFreq: number; // 493.88
+    octaveToneFreq: number; // 523.25
   },
   inputPitch: number,
   deltaTimeSeconds: number,
-  pixelRange: number = 800,
+  pixelRange: number = 600,
   setPaddleData: Dispatch<
     SetStateAction<{
       x: number;
@@ -30,30 +30,30 @@ export function pitchController(
   );
 
   setPaddleData((prevPaddleData) => {
-    const frequencyRange = scale.highestToneFreq - scale.lowestToneFreq;
-    const relativePitch = inputPitch - scale.lowestToneFreq;
-    const fraction = relativePitch / frequencyRange;
-    const desiredY = pixelRange - fraction * pixelRange;
+    const n =
+      Math.log(octaverPitch / scale.lowestToneFreq) * (12 / Math.log(2));
+
+    const desiredY = pixelRange - (n / 11) * pixelRange + pixelRange / 11 / 2;
 
     const currentY = prevPaddleData.y + prevPaddleData.height / 2; // Use paddle center
     const error = desiredY - currentY;
-    const gain = 100; // Adjust this value to control responsiveness
+    const gain = 8; // Adjust this value to control responsiveness
     let velocity = error * gain;
 
-    const maxSpeed = PADDLE_SPEED * 2;
+    const maxSpeed = PADDLE_SPEED * 4;
     if (velocity > maxSpeed) velocity = maxSpeed;
     if (velocity < -maxSpeed) velocity = -maxSpeed;
 
     const newY = prevPaddleData.y + velocity * deltaTimeSeconds;
 
-    // console.log(
-    //   // "New y: ",
-    //   // newY,
-    //   "pitch: ",
-    //   inputPitch,
-    //   "octaverPitch: ",
-    //   octaverPitch,
-    // );
+    console.log(
+      // "New y: ",
+      // newY,
+      "pitch: ",
+      inputPitch,
+      "octaverPitch: ",
+      octaverPitch,
+    );
 
     return { ...prevPaddleData, y: newY };
   });

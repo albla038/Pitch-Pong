@@ -29,12 +29,12 @@ export function useFFT(
       microphoneStream.connect(analyserLeft);
       microphoneStream.connect(analyserRight);
 
-      console.log(microphoneStream.channelCount);
+      // console.log(microphoneStream.channelCount);
 
-      console.log(
-        "FFT size: ",
-        analyserLeft.fftSize + " " + analyserRight.fftSize,
-      );
+      // console.log(
+      //   "FFT size: ",
+      //   analyserLeft.fftSize + " " + analyserRight.fftSize,
+      // );
 
       setFftAnalyserLeft(analyserLeft);
       setFftAnalyserRight(analyserRight);
