@@ -363,7 +363,7 @@ export default function Pong() {
         // console.log("Audio context: ", audioContext);
 
         pitchController(
-          majorScales["Chromatic"],
+          majorScales.C2,
           pitchLeft.current,
           deltaTimeSeconds,
           GAME_BOARD_HEIGHT,

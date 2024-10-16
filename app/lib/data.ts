@@ -18,29 +18,24 @@ export const majorScales = {
     highestToneFreq: 103.83,
     octaveToneFreq: 110,
   },
-  E2: {
-    scaleTones: ["E", "F#", "G#", "A", "B", "C#", "D#"],
-    lowestToneFreq: 82.41,
-    highestToneFreq: 155.56,
-    octaveToneFreq: 164.81,
-  },
-  "F#2": {
-    scaleTones: ["F#", "G#", "A#", "B", "C#", "D#", "E#"],
-    lowestToneFreq: 92.5,
-    highestToneFreq: 174.61,
-    octaveToneFreq: 184.99,
-  },
-  Bb3: {
-    scaleTones: ["Bb", "C", "D", "Eb", "F", "G", "A"],
-    lowestToneFreq: 233.08,
-    highestToneFreq: 440,
-    octaveToneFreq: 466.16,
-  },
-  C4: {
-    scaleTones: ["C", "D", "E", "F", "G", "A", "B"],
-    lowestToneFreq: 261.63,
-    highestToneFreq: 493.88,
-    octaveToneFreq: 523.25,
+  C2: {
+    scaleTones: [
+      { tone: "C", degree: 0, frequency: 65.41 },
+      { tone: "C#", degree: 1, frequency: 69.30 },
+      { tone: "D", degree: 2, frequency: 73.42 },
+      { tone: "D#", degree: 3, frequency: 77.78 },
+      { tone: "E", degree: 4, frequency: 82.41 },
+      { tone: "F", degree: 5, frequency: 87.31 },
+      { tone: "F#", degree: 6, frequency: 92.50 },
+      { tone: "G", degree: 7, frequency: 98.00 },
+      { tone: "G#", degree: 8, frequency: 103.83 },
+      { tone: "A", degree: 9, frequency: 110.00 },
+      { tone: "A#", degree: 10, frequency: 116.54 },
+      { tone: "B", degree: 11, frequency: 123.47 },
+    ],
+    lowestToneFreq: 65.41,
+    highestToneFreq: 123.47,
+    octaveToneFreq: 130.81,
   },
   Chromatic: {
     scaleTones: [

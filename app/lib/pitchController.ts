@@ -33,7 +33,7 @@ export function pitchController(
     const n =
       Math.log(octaverPitch / scale.lowestToneFreq) * (12 / Math.log(2));
 
-    const desiredY = pixelRange - (n / 11) * pixelRange + pixelRange / 11 / 2;
+    const desiredY = pixelRange - (n / 11) * pixelRange + pixelRange / 11 / 2 - prevPaddleData.height / 2;
 
     const currentY = prevPaddleData.y + prevPaddleData.height / 2; // Use paddle center
     const error = desiredY - currentY;
