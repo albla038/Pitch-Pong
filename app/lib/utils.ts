@@ -14,15 +14,15 @@ export function octaver(
 ) {
   if (pitch <= 0) return pitch;
 
-  if (pitch < lowestToneFreq) {
+  if (pitch < lowestToneFreq - 5) {
     do {
       pitch *= 2;
-    } while (pitch < lowestToneFreq);
+    } while (pitch < lowestToneFreq - 5);
     return pitch;
-  } else if (pitch > octaveToneFreq) {
+  } else if (pitch > octaveToneFreq+ 5) {
     do {
       pitch /= 2;
-    } while (pitch > octaveToneFreq);
+    } while (pitch > octaveToneFreq+ 5);
     return pitch;
   }
   return pitch;

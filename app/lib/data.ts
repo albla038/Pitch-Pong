@@ -32,6 +32,7 @@ export const majorScales = {
       { tone: "A", degree: 9, frequency: 110.00 },
       { tone: "A#", degree: 10, frequency: 116.54 },
       { tone: "B", degree: 11, frequency: 123.47 },
+      { tone: "C", degree: 12, frequency: 130.81 },
     ],
     lowestToneFreq: 65.41,
     highestToneFreq: 123.47,

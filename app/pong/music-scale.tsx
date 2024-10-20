@@ -45,11 +45,9 @@ export default function MusicScale({ className, scaleTones }: MusicScaleProps) {
 function Tone({
   scaleTone,
   isDiantonic,
-  hasDot,
 }: {
   scaleTone: string;
   isDiantonic: boolean;
-  hasDot: boolean;
 }) {
   return (
     <div
@@ -58,9 +56,6 @@ function Tone({
         isDiantonic ? "text-gray-50" : "text-gray-600",
       )}
     >
-      {hasDot && (
-        <div className="absolute bottom-[10%] left-1/2 size-1 -translate-x-1/2 -translate-y-1/2 rounded-full bg-gray-700" />
-      )}
       <p className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
         {scaleTone}
       </p>

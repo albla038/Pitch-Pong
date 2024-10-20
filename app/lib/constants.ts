@@ -4,7 +4,7 @@ export const GAME_BOARD_HEIGHT = 600;
 
 // Speeds
 export const PADDLE_SPEED = 400;
-export const BALL_SPEED = 200;
+export const BALL_SPEED = 150;
 
 // Colors
 export const GRAY_50 = "#f9fafb";

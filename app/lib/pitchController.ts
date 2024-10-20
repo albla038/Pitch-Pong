@@ -31,16 +31,16 @@ export function pitchController(
 
   setPaddleData((prevPaddleData) => {
     const n =
-      Math.log(octaverPitch / scale.lowestToneFreq) * (12 / Math.log(2));
+      Math.log(octaverPitch / scale.lowestToneFreq) * (11 / Math.log(2));
 
     const desiredY = pixelRange - (n / 11) * pixelRange + pixelRange / 11 / 2 - prevPaddleData.height / 2;
 
     const currentY = prevPaddleData.y + prevPaddleData.height / 2; // Use paddle center
     const error = desiredY - currentY;
-    const gain = 8; // Adjust this value to control responsiveness
+    const gain = 16; // Adjust this value to control responsiveness
     let velocity = error * gain;
 
-    const maxSpeed = PADDLE_SPEED;
+    const maxSpeed = PADDLE_SPEED * 2;
     if (velocity > maxSpeed) velocity = maxSpeed;
     if (velocity < -maxSpeed) velocity = -maxSpeed;
 

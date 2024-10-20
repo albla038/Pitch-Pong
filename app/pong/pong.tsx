@@ -18,7 +18,6 @@ import Title from "@/app/pong/title";
 import { useEffect, useRef, useState } from "react";
 import { useMicrophoneStream } from "../lib/hooks/useMicrophoneStream";
 import { useFFT } from "@/app/lib/hooks/useFFT";
-import { simplePitchAlgo } from "@/app/lib/simplePitchAlgo";
 import { pitchController } from "@/app/lib/pitchController";
 import { majorScales } from "@/app/lib/data";
 import MusicScale from "@/app/pong/music-scale";
@@ -167,7 +166,7 @@ export default function Pong() {
       y: prev.y + prev.velocity * deltaTimeSeconds,
     }));
 
-    moveRightPaddleAI(deltaTimeSeconds);
+    // moveRightPaddleAI(deltaTimeSeconds);
   }
 
   function checkPaddleBoundaries() {
@@ -271,22 +270,13 @@ export default function Pong() {
       stop();
     }
 
-    // // Collision with right boundary
+    // Collision with right boundary
     if (ballData.x + ballData.radius > GAME_BOARD_WIDTH) {
       // Game over
       setLeftPlayerScore((prev) => prev + 1);
       stop();
     }
 
-    // TODO FOR TESTING ONLY
-    // Collision with right boundary
-    // if (ballData.x + ballData.radius > GAME_BOARD_WIDTH) {
-    //   setBallData((prev) => ({
-    //     ...prev,
-    //     x: rightPaddleData.x - ballData.radius,
-    //     velocityX: -prev.velocityX,
-    //   }));
-    // }
   }
 
   function stop() {
@@ -300,7 +290,7 @@ export default function Pong() {
 
   const binSize = 16384;
 
-  const { audioContext, microphoneStream, error } = useMicrophoneStream();
+  const { audioContext, microphoneStream } = useMicrophoneStream();
   const [fftAnalyserLeft, fftAnalyserRight] = useFFT(
     audioContext,
     microphoneStream,
@@ -351,16 +341,9 @@ export default function Pong() {
           audioContext.sampleRate,
           binSize,
         );
-        // const pitch = simplePitchAlgo(
-        //   frequencyArray,
-        //   audioContext.sampleRate,
-        //   binSize,
-        // );
 
         if (pLeft > 20) pitchLeft.current = pLeft;
         if (pRight > 20) pitchRight.current = pRight;
-        // console.log("Pitch: ", pitchLeft.current + " " + pitchRight.current);
-        // console.log("Audio context: ", audioContext);
 
         pitchController(
           majorScales.C2,
@@ -414,7 +397,7 @@ export default function Pong() {
   return (
     <div className="flex min-h-svh flex-col items-center justify-center bg-gray-100">
       <main className="relative flex h-[724px] w-[1524px] flex-col items-center justify-center rounded-md bg-gray-900">
-        <div className="absolute left-1/2 top-3 flex w-[800px] -translate-x-1/2 items-end justify-around text-center font-mono text-gray-50">
+        <div className="absolute left-1/2 top-3 flex w-[800px] -translate-x-1/2 items-end justify-evenly text-center font-mono text-gray-50">
           <p className="text-3xl">{leftPlayerScore}</p>
           <button
             onClick={() => {
@@ -439,7 +422,7 @@ export default function Pong() {
           <Visualizer fftAnalyser={fftAnalyserLeft} side="left" />
           <MusicScale
             className="grow rounded-l-md"
-            scaleTones={majorScales["Chromatic"].scaleTones}
+            scaleTones={majorScales.C2.scaleTones}
           />
           <div
             className="relative flex items-center justify-center bg-gray-950"
@@ -458,7 +441,7 @@ export default function Pong() {
           </div>
           <MusicScale
             className="grow rounded-r-md"
-            scaleTones={majorScales["Chromatic"].scaleTones}
+            scaleTones={majorScales.C2.scaleTones}
           />
           <Visualizer fftAnalyser={fftAnalyserRight} side="right" />
         </div>
