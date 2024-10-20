@@ -1,9 +1,10 @@
+import Pong from "@/app/pong";
+
+
 export default function Page() {
-  
   return (
-    <div>
-      <h1>Home page</h1>
-      
-    </div>
+    <main>
+      <Pong />
+    </main>
   );
 }

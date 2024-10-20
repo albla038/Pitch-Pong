@@ -11,17 +11,17 @@ import {
 } from "@/app/lib/constants";
 import { useFrameLoop } from "@/app/lib/hooks/useFrameLoop";
 import { getPitch, getRandomAngle } from "@/app/lib/utils";
-import Ball from "@/app/pong/ball";
-import HalfWayLine from "@/app/pong/half-way-line";
-import Paddle from "@/app/pong/paddle";
-import Title from "@/app/pong/title";
+import Ball from "@/app/ball";
+import HalfWayLine from "@/app/half-way-line";
+import Paddle from "@/app/paddle";
+import Title from "@/app/title";
 import { useEffect, useRef, useState } from "react";
-import { useMicrophoneStream } from "../lib/hooks/useMicrophoneStream";
+import { useMicrophoneStream } from "./lib/hooks/useMicrophoneStream";
 import { useFFT } from "@/app/lib/hooks/useFFT";
 import { pitchController } from "@/app/lib/pitchController";
 import { majorScales } from "@/app/lib/data";
-import MusicScale from "@/app/pong/music-scale";
-import Visualizer from "@/app/pong/visualizer";
+import MusicScale from "@/app/music-scale";
+import Visualizer from "@/app/visualizer";
 
 function setInitialBallData() {
   const angle = getRandomAngle();
