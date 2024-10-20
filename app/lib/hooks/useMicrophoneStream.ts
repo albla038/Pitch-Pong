@@ -26,7 +26,7 @@ export function useMicrophoneStream() {
         setMicrophoneStream(source);
 
         console.log("Audio context: ", audioCtx);
-      } catch (error: any) {
+      } catch (error) {
         console.error("Couldn't initialize microphone: ", error);
         setError("Microphone access was denied or is unavailable.");
       }

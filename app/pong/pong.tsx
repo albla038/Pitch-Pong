@@ -131,27 +131,27 @@ export default function Pong() {
     };
   }, []);
 
-  function moveRightPaddleAI(deltaTimeSeconds: number) {
-    setRightPaddleData((prev) => {
-      const paddleCenterY = prev.y + prev.height / 2;
-      const ballY = ballData.y;
-      const distance = ballY - paddleCenterY;
+  // function moveRightPaddleAI(deltaTimeSeconds: number) {
+  //   setRightPaddleData((prev) => {
+  //     const paddleCenterY = prev.y + prev.height / 2;
+  //     const ballY = ballData.y;
+  //     const distance = ballY - paddleCenterY;
 
-      //simple proportional controller
-      const maxSpeed = PADDLE_SPEED * 0.85; //ai paddle speed (adjust for difficulty)
-      let velocity = distance * 5; // Proportional gain(adjust for responsivnes)
+  //     //simple proportional controller
+  //     const maxSpeed = PADDLE_SPEED * 0.85; //ai paddle speed (adjust for difficulty)
+  //     let velocity = distance * 5; // Proportional gain(adjust for responsivnes)
 
-      //clamp the velocity to the maximum speed
-      if (velocity > maxSpeed) velocity = maxSpeed;
-      if (velocity < -maxSpeed) velocity = -maxSpeed;
-      const newY = prev.y + velocity * deltaTimeSeconds;
+  //     //clamp the velocity to the maximum speed
+  //     if (velocity > maxSpeed) velocity = maxSpeed;
+  //     if (velocity < -maxSpeed) velocity = -maxSpeed;
+  //     const newY = prev.y + velocity * deltaTimeSeconds;
 
-      return {
-        ...prev,
-        y: newY,
-      };
-    });
-  }
+  //     return {
+  //       ...prev,
+  //       y: newY,
+  //     };
+  //   });
+  // }
 
   // Game logic functions
 
