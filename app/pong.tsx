@@ -395,7 +395,7 @@ export default function Pong() {
   checkBallCollisions();
 
   return (
-    <div className="flex min-h-svh flex-col items-center justify-center bg-gray-100">
+    <div className="flex min-h-svh flex-col items-center justify-center bg-gray-900">
       <main className="relative flex h-[724px] w-[1524px] flex-col items-center justify-center rounded-md bg-gray-900">
         <div className="absolute left-1/2 top-3 flex w-[800px] -translate-x-1/2 items-end justify-evenly text-center font-mono text-gray-50">
           <p className="text-3xl">{leftPlayerScore}</p>
@@ -447,9 +447,9 @@ export default function Pong() {
         </div>
 
         {/* Ball Speed Multiplier display here */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 transform text-gray-50">
+        {/* <div className="absolute bottom-3 left-1/2 -translate-x-1/2 transform text-gray-50">
           Ball Speed Multiplier: {ballSpeedMultiplier.toFixed(2)}
-        </div>
+        </div> */}
       </main>
     </div>
   );
